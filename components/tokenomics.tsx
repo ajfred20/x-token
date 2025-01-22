@@ -29,7 +29,7 @@ export default function Tokenomics() {
         </p>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <div className="p-6 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800 gradient-glow">
+          <div className="p-6 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800">
             <h3 className="text-lg font-semibold text-white mb-4">
               Token Distribution
             </h3>
@@ -49,7 +49,7 @@ export default function Tokenomics() {
             </div>
           </div>
 
-          <div className="p-6 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800 gradient-glow">
+          <div className="p-6 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800 hover:gradient-glow">
             <h3 className="text-lg font-semibold text-white mb-4">
               Token Details
             </h3>
