@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { LayoutDashboard, Wallet, User, Coins, HelpCircle } from "lucide-react";
+import {
+  LayoutDashboard,
+  Wallet,
+  User,
+  Coins,
+  HelpCircle,
+  CrownIcon,
+} from "lucide-react";
 
 const navItems = [
   {
@@ -8,10 +15,11 @@ const navItems = [
     href: "/dashboard",
     active: true,
   },
-  { icon: Wallet, label: "Buy Token", href: "/buy-token" },
+  { icon: Wallet, label: "Buy Token", href: "/dashboard/buy-token" },
   { icon: User, label: "Profile", href: "/profile" },
-  { icon: Coins, label: "My X Token", href: "/my-token" },
-  { icon: HelpCircle, label: "How to Buy", href: "/how-to-buy" },
+  { icon: Coins, label: "My X Token", href: "/dashboard/my-token" },
+  { icon: CrownIcon, label: "Status", href: "/dashboard/status" },
+  { icon: HelpCircle, label: "How to Buy", href: "/dashboard/how-to-buy" },
 ];
 
 export default function DashboardNav() {

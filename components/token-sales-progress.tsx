@@ -20,7 +20,7 @@ export default function TokenSalesProgress() {
           <span className="text-blue-400">82.13% Complete</span>
         </div>
         <div className="flex justify-center">
-          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 shimmer">
+          <Button className="bg-gradient-to-r text-white from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8 shimmer">
             Buy X Tokens Now →
           </Button>
         </div>

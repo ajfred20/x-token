@@ -15,9 +15,6 @@ export default function TokenAnnouncement() {
                 className="object-cover"
               />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-xl font-bold text-white">E</span>
-            </div>
           </div>
         </div>
         <div className="flex-1 min-w-0">
