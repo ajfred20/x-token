@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Grid2X2, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
+import TokenPurchase from "@/components/token-purchase";
 
 const cryptoOptions = [
   {
@@ -35,6 +36,7 @@ const cryptoOptions = [
 export default function BuyTokens() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCrypto, setSelectedCrypto] = useState<string | null>(null);
 
   const filteredOptions = cryptoOptions.filter((option) =>
     option.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -56,92 +58,97 @@ export default function BuyTokens() {
         </Link>
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold text-white">
-          Select Payment Method
-        </h2>
-        <p className="text-gray-400 text-sm">
-          Choose your preferred cryptocurrency for secure and instant
-          transactions
-        </p>
+      {selectedCrypto ? (
+        <TokenPurchase onCloseAction={() => setSelectedCrypto(null)} />
+      ) : (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-white">
+            Select Payment Method
+          </h2>
+          <p className="text-gray-400 text-sm">
+            Choose your preferred cryptocurrency for secure and instant
+            transactions
+          </p>
 
-        <div className="flex items-center space-x-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Search cryptocurrency..."
-              className="pl-10 bg-gray-900/50 border-gray-800 text-white"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center space-x-2 bg-gray-900/50 rounded-md p-1">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded ${
-                viewMode === "grid" ? "bg-gray-800" : ""
-              }`}
-            >
-              <Grid2X2 className="h-4 w-4 text-gray-400" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded ${
-                viewMode === "list" ? "bg-gray-800" : ""
-              }`}
-            >
-              <List className="h-4 w-4 text-gray-400" />
-            </button>
-          </div>
-        </div>
-
-        <div
-          className={`grid gap-4 ${
-            viewMode === "grid" ? "grid-cols-1 md:grid-cols-4" : "grid-cols-1"
-          }`}
-        >
-          {filteredOptions.map((option) => (
-            <button
-              key={option.id}
-              className="p-4 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800 hover:border-gray-700 transition-colors flex items-center gap-4"
-            >
-              <div
-                className={`w-10 h-10 rounded-full ${option.iconBg} flex items-center justify-center text-white font-bold`}
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Search cryptocurrency..."
+                className="pl-10 bg-gray-900/50 border-gray-800 text-white"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center space-x-2 bg-gray-900/50 rounded-md p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded ${
+                  viewMode === "grid" ? "bg-gray-800" : ""
+                }`}
               >
-                {option.icon}
-              </div>
-              <div className="flex-1 text-left">
-                <div className="text-white font-semibold">{option.name}</div>
-                <div className="text-sm text-gray-400">
-                  1 {option.name} = {option.rate} X
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center justify-center space-x-4 mt-6">
-          <button className="p-2 rounded-lg bg-gray-900/50 border border-gray-800">
-            <ChevronLeft className="h-4 w-4 text-gray-400" />
-          </button>
-          <div className="text-gray-400 text-sm">
-            <span className="text-white">1</span> / 2
+                <Grid2X2 className="h-4 w-4 text-gray-400" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded ${
+                  viewMode === "list" ? "bg-gray-800" : ""
+                }`}
+              >
+                <List className="h-4 w-4 text-gray-400" />
+              </button>
+            </div>
           </div>
-          <button className="p-2 rounded-lg bg-gray-900/50 border border-gray-800">
-            <ChevronRight className="h-4 w-4 text-gray-400" />
-          </button>
-        </div>
 
-        <div className="text-center mt-6">
-          <Link
-            href="/support"
-            className="text-gray-500 text-sm hover:text-gray-400"
+          <div
+            className={`grid gap-4 ${
+              viewMode === "grid" ? "grid-cols-1 md:grid-cols-4" : "grid-cols-1"
+            }`}
           >
-            Need help? Contact our support team 24/7
-          </Link>
+            {filteredOptions.map((option) => (
+              <button
+                key={option.id}
+                className="p-4 rounded-lg bg-gray-900/50 backdrop-blur border border-gray-800 hover:border-gray-700 transition-colors flex items-center gap-4"
+                onClick={() => setSelectedCrypto(option.id)}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full ${option.iconBg} flex items-center justify-center text-white font-bold`}
+                >
+                  {option.icon}
+                </div>
+                <div className="flex-1 text-left">
+                  <div className="text-white font-semibold">{option.name}</div>
+                  <div className="text-sm text-gray-400">
+                    1 {option.name} = {option.rate} X
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-center space-x-4 mt-6">
+            <button className="p-2 rounded-lg bg-gray-900/50 border border-gray-800">
+              <ChevronLeft className="h-4 w-4 text-gray-400" />
+            </button>
+            <div className="text-gray-400 text-sm">
+              <span className="text-white">1</span> / 2
+            </div>
+            <button className="p-2 rounded-lg bg-gray-900/50 border border-gray-800">
+              <ChevronRight className="h-4 w-4 text-gray-400" />
+            </button>
+          </div>
+
+          <div className="text-center mt-6">
+            <Link
+              href="/support"
+              className="text-gray-500 text-sm hover:text-gray-400"
+            >
+              Need help? Contact our support team 24/7
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
