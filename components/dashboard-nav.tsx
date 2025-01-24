@@ -5,7 +5,7 @@ import {
   Wallet,
   User,
   Coins,
-  HelpCircle,
+  HelpCircle, 
   CrownIcon,
   Menu,
   X,

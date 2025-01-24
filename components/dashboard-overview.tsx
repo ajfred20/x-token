@@ -1,8 +1,59 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Wallet, DollarSign, Trophy } from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardOverview() {
+  const [balance, setBalance] = useState<number | null>(null);
+  const [usd, setUsd] = useState<number | null>(null); // USD equivalent of balance
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true); // Ensure the component renders only on the client side
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      // Handle missing token, you can show an error message or a redirect here
+      setErrorMessage("You are not logged in.");
+    } else {
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        fetchBalance(userId);
+      } else {
+        setErrorMessage("User ID not found.");
+      }
+    }
+  }, []);
+
+  const fetchBalance = async (userId: string) => {
+    try {
+      const response = await fetch(`/getBalance.php?user_id=${encodeURIComponent(userId)}`);
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setBalance(data.balance); // Assuming the balance is returned as 'balance'
+      } else {
+        setErrorMessage(data.message || "Failed to fetch balance.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while fetching balance.");
+    }
+  };
+
+  useEffect(() => {
+    if (balance !== null) {
+      setUsd(balance * 5); // 1 X = 5 USD
+    }
+  }, [balance]);
+
+  if (!isMounted) {
+    return <div>Loading...</div>; // Render a loading indicator until the component is mounted
+  }
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
@@ -17,10 +68,12 @@ export default function DashboardOverview() {
             </div>
           </div>
           <div className="space-y-4">
-            <div className="text-4xl font-bold text-blue-400">0 X</div>
-            <p className="text-sm text-gray-500">
-              Your current X token balance
-            </p>
+            {balance !== null ? (
+              <div className="text-4xl font-bold text-blue-400">{balance} X</div>
+            ) : (
+              <div className="text-4xl font-bold text-blue-400">Loading...</div>
+            )}
+            <p className="text-sm text-gray-500">Your current X token balance</p>
             <Button
               variant="default"
               className="w-full text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shimmer"
@@ -39,7 +92,11 @@ export default function DashboardOverview() {
             </div>
           </div>
           <div className="space-y-4">
-            <div className="text-4xl font-bold text-green-400">$0.00</div>
+            {usd !== null ? (
+              <div className="text-4xl font-bold text-green-400">${usd.toFixed(2)}</div>
+            ) : (
+              <div className="text-4xl font-bold text-green-400">Loading...</div>
+            )}
             <p className="text-sm text-gray-500">1 X = $5.44</p>
           </div>
         </div>
@@ -64,12 +121,14 @@ export default function DashboardOverview() {
                 className="h-2 bg-gray-700 [&>div]:bg-gradient-to-r [&>div]:from-blue-600 [&>div]:to-purple-600"
               />
             </div>
-            <Button
-              variant="default"
-              className="w-full text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shimmer"
-            >
-              Buy X Tokens Now →
-            </Button>
+            <a href="/dashboard/buy-token">
+              <Button
+                variant="default"
+                className="w-full text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shimmer"
+              >
+                Buy X Tokens Now →
+              </Button>
+            </a >
           </div>
         </div>
       </div>
