@@ -14,14 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Database connection settings
-$host = 'localhost';
-$db = 'x-token';
-$user = 'root';
-$pass = '';
-
-// Connect to the database
-$conn = new mysqli($host, $user, $pass, $db);
+// Include database connection
+require_once 'config.php';
 
 // Check connection
 if ($conn->connect_error) {

@@ -1,24 +1,80 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Navbar from "@/components/navbar";
+import { useRouter } from "next/navigation"; // For navigation after signup
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log("Registration attempt with:", {
-      email,
-      password,
-      confirmPassword,
-    });
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    // Simple validation
+    if (!email || !password || !confirmPassword) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("http://localhost/x-token/signup.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          confirmPassword,
+        }),
+      });
+
+      // Get the response as JSON
+      const data = await response.json();
+
+      // Check the response from the server
+      if (data.status === "success") {
+        // Store the token in localStorage with key 'authToken'
+        localStorage.setItem("authToken", data.token);
+
+        // Optionally, you can also store the user's email or any other info in localStorage
+        localStorage.setItem("userEmail", email);
+
+        setSuccessMessage("Account created successfully!... Redirecting...");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+
+        // Redirect to /dashboard
+        router.push("/dashboard");
+      } else {
+        setErrorMessage(data.message || "Signup failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setErrorMessage("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -74,12 +130,25 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Display error or success message */}
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
+            {successMessage && (
+              <p className="text-green-500 text-sm mt-2">{successMessage}</p>
+            )}
+
             <div>
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shimmer"
+                disabled={isLoading}
+                className={`w-full bg-gradient-to-r from-blue-500 to-purple-500 ${
+                  isLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:from-blue-600 hover:to-purple-600"
+                } text-white shimmer`}
               >
-                Sign up
+                {isLoading ? "Signing up..." : "Sign up"}
               </Button>
             </div>
           </form>
